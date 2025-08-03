@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Button, Col, message, Popconfirm, Row, Space, Tag } from "antd";
+import {
+  Avatar,
+  Button,
+  Col,
+  Image,
+  message,
+  Popconfirm,
+  Row,
+  Space,
+  Spin,
+  Tag,
+} from "antd";
 import {
   EditOutlined,
   StopOutlined,
@@ -71,12 +82,10 @@ const Customers = () => {
   };
 
   // Block/Active Handler
-  const handleCustomerStatus = async (vendorId, newStatus) => {
-    console.log(newStatus);
+  const handleCustomerStatus = async (userId) => {
     try {
       const response = await updateStatus({
-        id: vendorId,
-        status: newStatus,
+        id: userId,
       });
       console.log(response);
       if (response?.data) {
@@ -108,102 +117,158 @@ const Customers = () => {
 
   const columns = [
     {
-      title: "Full Name",
-      dataIndex: "full_name",
-      id: "full_name",
-      render: (text) => (
-        <span style={{ color: "#0A84FF", cursor: "pointer" }}>{text}</span>
+      title: "ID",
+      dataIndex: "_id",
+      key: "_id",
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: "Profile",
+      dataIndex: "userImage",
+      key: "userImage",
+      render: (image, record) => (
+        <Image
+          src={image}
+          alt={record.name}
+          width={50}
+          height={50}
+          style={{ objectFit: "cover", borderRadius: "50%" }}
+          fallback="https://ui-avatars.com/api/?name=User&background=random"
+          preview={{ mask: "Click to preview" }}
+        />
       ),
+    },
+    {
+      title: "Full Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <div style={{ minWidth: "150px" }}>{text}</div>,
     },
     {
       title: "Username",
       dataIndex: "username",
-      id: "username",
-      render: (text) => <span style={{ color: "#4FC3F7" }}>@{text}</span>,
-    },
-    { title: "Age", dataIndex: "age", id: "age" },
-    { title: "Gender", dataIndex: "gender", id: "gender" },
-    { title: "Email", dataIndex: "email", id: "email" },
-
-    {
-      title: "Posts",
-      dataIndex: "total_posts",
-      id: "total_posts",
+      key: "username",
+      render: (text) => (
+        <div style={{ minWidth: "150px" }}>
+          <span style={{ color: "#4FC3F7" }}>{text}</span>
+        </div>
+      ),
     },
     {
-      title: "Likes",
-      dataIndex: "total_likes",
-      id: "total_likes",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Bio",
+      dataIndex: "bio",
+      key: "bio",
+      render: (text) => <div style={{ minWidth: "200px" }}>{text || "--"}</div>,
+    },
+    {
+      title: "Followers",
+      dataIndex: "followers",
+      key: "followers",
+    },
+    {
+      title: "Following",
+      dataIndex: "following",
+      key: "following",
     },
     {
       title: "Shares",
       dataIndex: "total_shares",
-      id: "total_shares",
+      key: "total_shares",
+      render: (text) => <span>{text ?? 0}</span>,
     },
-
     {
-      title: "Status",
-      dataIndex: "status",
-      id: "status",
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
+      title: "Notifications",
+      dataIndex: "isNotificationEnable",
+      key: "isNotificationEnable",
+      render: (value) =>
+        value ? (
+          <Tag color="green">Enabled</Tag>
+        ) : (
+          <Tag color="red">Disabled</Tag>
+        ),
+    },
+    {
+      title: "Active Status",
+      dataIndex: "activeStatus",
+      key: "activeStatus",
+      render: (value) => (
+        <div style={{ minWidth: "100px" }}>
+          {value ? (
+            <Tag color="green">Active</Tag>
+          ) : (
+            <Tag color="red">Inactive</Tag>
+          )}
+        </div>
       ),
     },
     {
       title: "Registration Date",
-      dataIndex: "registration_date",
-      id: "registration_date",
-      render: (value) => <span>{toIST(value)}</span>,
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value) => (
+        <div style={{ minWidth: "150px" }}>
+          <span>{toIST(value)}</span>
+        </div>
+      ),
+    },
+    {
+      title: "Last Updated",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (value) => (
+        <div style={{ minWidth: "150px" }}>
+          <span>{toIST(value)}</span>
+        </div>
+      ),
     },
     {
       title: "Actions",
-      id: "actions",
+      key: "actions",
       render: (_, record) => {
-        const isBlocked = record.status?.toLowerCase() === "block";
-        const isPending = record.status?.toLowerCase() === "pending";
-
-        const nextStatus = isPending || isBlocked ? "active" : "block";
-        const statusLabel =
-          nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
-
         return (
           <Space>
-            <Button
+            {/* <Button
               type="primary"
               icon={<EditOutlined />}
               onClick={() => handleModalOpen(record)}
             >
               Edit
-            </Button>
+            </Button> */}
 
             <Button
-              onClick={() => handleCustomerStatus(record.id, nextStatus)}
+              onClick={() => handleCustomerStatus(record._id)}
               style={{
                 backgroundColor:
-                  nextStatus === "active" ? "#2dba4e" : "#ff4d4f",
+                  record?.activeStatus === true ? "#ff4d4f" : "#2dba4e",
                 color: "#fff",
-                borderColor: nextStatus === "active" ? "#2dba4e" : "#ff4d4f",
+                borderColor:
+                  record?.activeStatus === true ? "#ff4d4f" : "#2dba4e",
               }}
               icon={
-                nextStatus === "active" ? (
-                  <CheckCircleOutlined />
-                ) : (
+                record?.activeStatus === true ? (
                   <StopOutlined />
+                ) : (
+                  <CheckCircleOutlined />
                 )
               }
             >
-              {statusLabel}
+              {record?.activeStatus === true ? "Inactive" : "Active"}
             </Button>
 
-            <Popconfirm
+            {/* <Popconfirm
               title="Are you sure you want to delete this user?"
               description="This action cannot be undone."
               okText="Yes"
               cancelText="No"
-              onConfirm={() => handleDeleteCustomer(record.id)}
+              onConfirm={() => handleDeleteCustomer(record._id)}
             >
-              <Button type="primary" danger icon={<DeleteOutlined />}></Button>
-            </Popconfirm>
+              <Button type="primary" danger icon={<DeleteOutlined />} />
+            </Popconfirm> */}
           </Space>
         );
       },
@@ -230,7 +295,7 @@ const Customers = () => {
             </h2>
           </Col>
 
-          <Col>
+          {/* <Col>
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -238,17 +303,33 @@ const Customers = () => {
             >
               Add Customer
             </Button>
-          </Col>
+          </Col> */}
         </Row>
       </div>
-      <div>
-        <CustomTable
-          dataSource={usersData}
-          columns={columns}
-          pagination={pagination}
-          onChange={handleTableChange}
-        />
-      </div>
+      {!customersData && !customersData?.users ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "40vh",
+            flexDirection: "column",
+          }}
+        >
+          <Spin />
+          <p>Loading.. Please wait</p>
+        </div>
+      ) : (
+        <div>
+          <CustomTable
+            dataSource={customersData?.users}
+            columns={columns}
+            pagination={pagination}
+            onChange={handleTableChange}
+          />
+        </div>
+      )}
+
       <CustomerModal
         visible={modalVisible}
         onCancel={handleModalClose}

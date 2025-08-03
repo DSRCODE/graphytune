@@ -9,6 +9,7 @@ import {
   message as AntMessage,
   Row,
   Col,
+  Spin,
 } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import {
@@ -148,20 +149,22 @@ const TicketListTable = () => {
           >
             Reply
           </Button> */}
-          <Button
-            type="default"
-            style={{
-              backgroundColor: "#28a745",
-              color: "#fff",
-              border: "1px solid #28a745",
-              padding: "0 10px",
-            }}
-            onClick={() => {
-              handleUpdateSupport(record._id);
-            }}
-          >
-            Status
-          </Button>
+          {record?.isResolved === "resolved" ? null : (
+            <Button
+              type="default"
+              style={{
+                backgroundColor: "#28a745",
+                color: "#fff",
+                border: "1px solid #28a745",
+                padding: "0 10px",
+              }}
+              onClick={() => {
+                handleUpdateSupport(record._id);
+              }}
+            >
+              Resolved
+            </Button>
+          )}
           <Button
             type="default"
             style={{
@@ -178,7 +181,7 @@ const TicketListTable = () => {
       ),
     },
   ];
-
+  const ts = true;
   return (
     <div style={{ padding: 24 }}>
       <div style={{ marginBottom: 20 }}>
@@ -200,12 +203,28 @@ const TicketListTable = () => {
           </Col>
         </Row>
       </div>
-      <CustomTable
-        columns={columns}
-        dataSource={ticketList?.supports}
-        pagination={{ pageSize: 10 }}
-        rowKey="_id"
-      />
+
+      {!ticketList && !ticketList?.supports ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "40vh",
+            flexDirection: "column",
+          }}
+        >
+          <Spin />
+          <p>Loading.. Please wait</p>
+        </div>
+      ) : (
+        <CustomTable
+          columns={columns}
+          dataSource={ticketList?.supports}
+          pagination={{ pageSize: 10 }}
+          rowKey="_id"
+        />
+      )}
 
       <Modal
         title={`Reply to Ticket #${selectedTicket?.id}`}

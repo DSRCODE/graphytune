@@ -12,6 +12,7 @@ import {
   Col,
   Input,
   Tabs,
+  Spin,
 } from "antd";
 import {
   EditOutlined,
@@ -175,7 +176,7 @@ const ProductList = () => {
       dataIndex: "commentsEnabled",
       key: "commentsEnabled",
       render: (value) => (
-        <div style={{width:"150px"}}>
+        <div style={{ width: "150px" }}>
           {value ? (
             <Tag color="blue">Enabled</Tag>
           ) : (
@@ -221,6 +222,8 @@ const ProductList = () => {
     // },
   ];
 
+
+
   return (
     <div style={{ padding: 20 }}>
       <div style={{ marginBottom: 20 }}>
@@ -254,11 +257,26 @@ const ProductList = () => {
           </Col>
         </Row>
       </div>
-      <CustomTable
-        columns={columns}
-        dataSource={product?.posts}
-        pagination={{ pageSize: 10 }}
-      />
+      {!product && !product?.posts ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "40vh",
+            flexDirection:"column"
+          }}
+        >
+          <Spin />
+          <p>Loading.. Please wait</p>
+        </div>
+      ) : (
+        <CustomTable
+          columns={columns}
+          dataSource={product?.posts}
+          pagination={{ pageSize: 10 }}
+        />
+      )}
 
       <Modal
         open={isModalVisible}

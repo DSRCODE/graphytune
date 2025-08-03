@@ -19,7 +19,7 @@ export const customerApi = createApi({
 
     // Get All Customers
     getCustomers: builder.query({
-      query: () => "admin/customer-list",
+      query: () => "admin/get-all-users-admin",
       providesTags: ["Customer"],
     }),
 
@@ -44,10 +44,9 @@ export const customerApi = createApi({
 
     // Update Customer Status (block/unblock)
     updateCustomerStatus: builder.mutation({
-      query: ({ id, status }) => ({
-        url: `admin/customer-status/${id}`,
+      query: ({ id }) => ({
+        url: `admin/change-user-status?userId=${id}`,
         method: "PATCH",
-        body: { status },
       }),
       invalidatesTags: ["Customer"],
     }),
