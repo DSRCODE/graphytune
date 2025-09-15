@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -12,10 +12,12 @@ import {
   FaTruck,
   FaPlus,
   FaList,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 import "./Sidebar.css";
 import { BiCoinStack, BiSolidCategory } from "react-icons/bi";
+import { toast } from "react-toastify";
 
 const menuItems = [
   {
@@ -38,14 +40,6 @@ const menuItems = [
     icon: <FaBoxOpen />,
     path: "/products/list",
   },
-  // {
-  //   name: "Products",
-  //   icon: <FaBoxOpen />,
-  //   children: [
-  //     { name: "Create Product", icon: <FaPlus />, path: "/products/create" },
-  //     { name: "Product List", icon: <FaList />, path: "/products/list" },
-  //   ],
-  // },
 
   {
     name: "Orders",
@@ -77,7 +71,8 @@ const menuItems = [
   },
 ];
 
-export default function Sidebar({ setCollapsed , collapsed}) {
+export default function Sidebar({ setCollapsed, collapsed }) {
+  const navigate = useNavigate();
   const location = useLocation();
   // const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState("Dashboard");
@@ -116,76 +111,91 @@ export default function Sidebar({ setCollapsed , collapsed}) {
     return children.some((child) => location.pathname.startsWith(child.path));
   };
 
-  return (
-    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-      <div className="toggle-btn" onClick={toggleCollapse}>
-        <span>&#9776;</span>
-      </div>
-      <nav>
-        {menuItems.map((item, index) => {
-          const hasChildren = !!item.children;
-          const isOpen = openMenu === item.name;
-          const isActiveParent =
-            location.pathname === item.path ||
-            (hasChildren && isChildActive(item.children));
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/login");
+    toast.success("logged out succesfully");
+  };
 
-          return (
-            <div key={index}>
-              {hasChildren ? (
-                <>
-                  <div
-                    className={`menu-item ${isOpen ? "open" : ""} ${
-                      isActiveParent ? "active" : ""
-                    }`}
-                    onClick={() => handleDropdown(item.name)}
-                  >
-                    <span
-                      className="icon"
-                      onClick={() => {
-                        if (!isOpen) setOpenMenu(item.name);
-                        toggleCollapse();
-                      }}
+  return (
+    <>
+      <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+        <div className="toggle-btn" onClick={toggleCollapse}>
+          <span>&#9776;</span>
+        </div>
+        <nav>
+          {menuItems.map((item, index) => {
+            const hasChildren = !!item.children;
+            const isOpen = openMenu === item.name;
+            const isActiveParent =
+              location.pathname === item.path ||
+              (hasChildren && isChildActive(item.children));
+
+            return (
+              <div key={index}>
+                {hasChildren ? (
+                  <>
+                    <div
+                      className={`menu-item ${isOpen ? "open" : ""} ${
+                        isActiveParent ? "active" : ""
+                      }`}
+                      onClick={() => handleDropdown(item.name)}
                     >
-                      {item.icon}
-                    </span>
-                    {!collapsed && <span>{item.name}</span>}
-                    {!collapsed &&
-                      (isOpen ? (
-                        <IoMdArrowDropdown className="dropdown-icon" />
-                      ) : (
-                        <IoMdArrowDropright className="dropdown-icon" />
-                      ))}
-                  </div>
-                  {isOpen &&
-                    !collapsed &&
-                    item.children.map((child, i) => (
-                      <Link
-                        key={i}
-                        to={child.path}
-                        className={`submenu-item ${
-                          location.pathname === child.path ? "active" : ""
-                        }`}
-                        // onClick={() => setCollapsed(true)}
+                      <span
+                        className="icon"
+                        onClick={() => {
+                          if (!isOpen) setOpenMenu(item.name);
+                          toggleCollapse();
+                        }}
                       >
-                        <span className="icon">{child.icon}</span>
-                        <span>{child.name}</span>
-                      </Link>
-                    ))}
-                </>
-              ) : (
-                <Link
-                  to={item.path}
-                  className={`menu-item ${isActiveParent ? "active" : ""}`}
-                  // onClick={() => setCollapsed(true)}
-                >
-                  <span className="icon">{item.icon}</span>
-                  {!collapsed && <span>{item.name}</span>}
-                </Link>
-              )}
-            </div>
-          );
-        })}
-      </nav>
-    </div>
+                        {item.icon}
+                      </span>
+                      {!collapsed && <span>{item.name}</span>}
+                      {!collapsed &&
+                        (isOpen ? (
+                          <IoMdArrowDropdown className="dropdown-icon" />
+                        ) : (
+                          <IoMdArrowDropright className="dropdown-icon" />
+                        ))}
+                    </div>
+                    {isOpen &&
+                      !collapsed &&
+                      item.children.map((child, i) => (
+                        <Link
+                          key={i}
+                          to={child.path}
+                          className={`submenu-item ${
+                            location.pathname === child.path ? "active" : ""
+                          }`}
+                          // onClick={() => setCollapsed(true)}
+                        >
+                          <span className="icon">{child.icon}</span>
+                          <span>{child.name}</span>
+                        </Link>
+                      ))}
+                  </>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className={`menu-item ${isActiveParent ? "active" : ""}`}
+                    // onClick={() => setCollapsed(true)}
+                  >
+                    <span className="icon">{item.icon}</span>
+                    {!collapsed && <span>{item.name}</span>}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+      {/* Logout Button at Bottom */}
+      <div className="logout-section">
+        <button className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt className="icon" />
+          {!collapsed && <span>Logout</span>}
+        </button>
+      </div>
+      </div>
+    </>
   );
 }

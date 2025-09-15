@@ -89,3 +89,25 @@ nav {
     margin-left: auto;
     font-size: 16px;
 }
+
+.logout-section {
+    padding: 12px;
+}
+
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
