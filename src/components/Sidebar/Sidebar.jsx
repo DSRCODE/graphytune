@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 import "./Sidebar.css";
-import { BiSolidCategory } from "react-icons/bi";
+import { BiCoinStack, BiSolidCategory } from "react-icons/bi";
 
 const menuItems = [
   {
@@ -51,6 +51,11 @@ const menuItems = [
     name: "Orders",
     icon: <FaShoppingCart />,
     path: "/orders/list",
+  },
+  {
+    name: "Transaction",
+    icon: <BiCoinStack />,
+    path: "/transaction/list",
   },
   {
     name: "Settings",

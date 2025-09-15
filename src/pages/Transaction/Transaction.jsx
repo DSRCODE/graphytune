@@ -49,7 +49,7 @@ const initialOrders = [
   },
 ];
 
-const OrderList = () => {
+const Transaction = () => {
   const { data: order, isLoading } = useGetAllOrdersQuery();
   const [orders, setOrders] = useState(initialOrders);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -98,86 +98,63 @@ const OrderList = () => {
       width: 220,
     },
 
-    // {
-    //   title: "Buyer",
-    //   dataIndex: ["buyerUserId", "name"],
-    //   key: "buyer",
-    //   render: (_, record) => (
-    //     <Space>
-    //       <Image
-    //         src={record?.buyerUserId?.userImage}
-    //         width={32}
-    //         height={32}
-    //         style={{ borderRadius: "50%" }}
-    //       />
-    //       <span>{record?.buyerUserId?.name}</span>
-    //     </Space>
-    //   ),
-    //   width: 200,
-    // },
-    // {
-    //   title: "Seller",
-    //   dataIndex: ["sellerUserId", "name"],
-    //   key: "seller",
-    //   render: (_, record) => (
-    //     <Space>
-    //       <Image
-    //         src={record?.sellerUserId?.userImage}
-    //         width={32}
-    //         height={32}
-    //         style={{ borderRadius: "50%" }}
-    //       />
-    //       <span>{record?.sellerUserId?.name}</span>
-    //     </Space>
-    //   ),
-    //   width: 200,
-    // },
+    {
+      title: "Buyer",
+      dataIndex: ["buyerUserId", "name"],
+      key: "buyer",
+      render: (_, record) => (
+        <Space>
+          <Image
+            src={record?.buyerUserId?.userImage}
+            width={32}
+            height={32}
+            style={{ borderRadius: "50%" }}
+          />
+          <span>{record?.buyerUserId?.name}</span>
+        </Space>
+      ),
+      width: 200,
+    },
+    {
+      title: "Seller",
+      dataIndex: ["sellerUserId", "name"],
+      key: "seller",
+      render: (_, record) => (
+        <Space>
+          <Image
+            src={record?.sellerUserId?.userImage}
+            width={32}
+            height={32}
+            style={{ borderRadius: "50%" }}
+          />
+          <span>{record?.sellerUserId?.name}</span>
+        </Space>
+      ),
+      minWidth: 200,
+    },
     {
       title: "Products",
       dataIndex: "products",
       key: "products",
-      render: (products) => (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {products?.map((p) => (
-            <div
-              key={p._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "6px 8px",
-                background: "#fafafa",
-                borderRadius: 6,
-              }}
-            >
-              <img
-                src={p.imageUrl}
-                alt={p.title}
-                style={{
-                  width: 40,
-                  height: 40,
-                  objectFit: "cover",
-                  borderRadius: 4,
-                  flexShrink: 0,
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 500 }}>{p.title}</div>
-                <div style={{ fontSize: 12, color: "#555" }}>
-                  {p.quantity} × ₹{p.price}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ),
-      width: 300,
+      render: (products) =>
+        products?.map((p) => (
+          <div key={p._id} style={{ marginBottom: 8 }}>
+            <Image
+              src={p.imageUrl}
+              width={40}
+              height={40}
+              style={{ marginRight: 8 }}
+            />
+            <strong>{p.title}</strong> ({p.quantity} × ₹{p.price})
+          </div>
+        )),
+      minWidth: 250,
     },
     {
       title: "Total Amount",
       dataIndex: "totalAmount",
       key: "totalAmount",
-      minWidth: 150,
+      minWidth: 130,
       render: (amt) => `₹${amt}`,
     },
     {
@@ -191,18 +168,18 @@ const OrderList = () => {
         </Tag>
       ),
     },
-    // {
-    //   title: "Razorpay Order ID",
-    //   dataIndex: "razorpayOrderId",
-    //   key: "razorpayOrderId",
-    //   width: 220,
-    // },
-    // {
-    //   title: "Razorpay Payment ID",
-    //   dataIndex: "razorpayPaymentId",
-    //   key: "razorpayPaymentId",
-    //   width: 220,
-    // },
+    {
+      title: "Razorpay Order ID",
+      dataIndex: "razorpayOrderId",
+      key: "razorpayOrderId",
+      minWidth: 220,
+    },
+    {
+      title: "Razorpay Payment ID",
+      dataIndex: "razorpayPaymentId",
+      key: "razorpayPaymentId",
+      minWidth: 220,
+    },
     {
       title: "Address",
       dataIndex: "addressDetails",
@@ -277,7 +254,7 @@ const OrderList = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2 style={{ marginBottom: 20 }}>Order List</h2>
+      <h2 style={{ marginBottom: 20 }}>Transaction List</h2>
       <Table
         columns={columns}
         dataSource={order?.orders}
@@ -298,4 +275,4 @@ const OrderList = () => {
   );
 };
 
-export default OrderList;
+export default Transaction;

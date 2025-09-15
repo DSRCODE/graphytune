@@ -1,14 +1,14 @@
 export const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
-    case "active":
+    case "accepted":
       return "green";
-    case "pending":
+    case "confirmed":
       return "orange";
     case "rejected":
       return "red";
     case "refund":
       return "purple";
-    case "processing":
+    case "delivered":
       return "blue";
     case "created":
       return "cyan";

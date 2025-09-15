@@ -1,10 +1,13 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { Input, Button, Typography, Card } from "antd";
+import { Input, Button, Typography, Card, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../Styles/auth.css";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const { Title } = Typography;
 
@@ -15,6 +18,28 @@ const LoginSchema = Yup.object().shape({
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleLogin = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.post(
+        "https://graphytune.com/api/admin/admin-login",
+        values
+      );
+
+      if (response.data?.token) {
+        login(response.data.token);
+        toast.success("Login successful!");
+        navigate("/");
+      } else {
+        toast.error("Invalid credentials");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="auth-container">
@@ -36,12 +61,16 @@ export default function Login() {
             <Formik
               initialValues={{ email: "", password: "" }}
               validationSchema={LoginSchema}
-              onSubmit={(values) => {
-                localStorage.setItem("adminToken", "mock_token");
-                navigate("/");
-              }}
+              onSubmit={handleLogin}
             >
-              {({ values, errors, touched, handleChange, handleBlur }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+              }) => (
                 <Form>
                   <div className="form-item">
                     <Input
@@ -71,17 +100,22 @@ export default function Login() {
                     )}
                   </div>
 
-                  <Button type="primary" htmlType="submit" block>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    block
+                    loading={isSubmitting}
+                  >
                     Login
                   </Button>
 
-                  <Button
+                  {/* <Button
                     type="link"
                     block
                     onClick={() => navigate("/forgot-password")}
                   >
                     Forgot Password?
-                  </Button>
+                  </Button> */}
                 </Form>
               )}
             </Formik>

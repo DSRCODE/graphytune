@@ -17,6 +17,7 @@ import DeliveryDetail from "./pages/Users/Delivery/DeliveryDetail";
 import CMSPrivacyEditor from "./components/Editor/Editor";
 import Category from "./pages/Category";
 import WelcomePage from "./pages/WelcomePage";
+import Transaction from "./pages/Transaction/Transaction";
 
 export default function App() {
   const dummyDeliveryData = {
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="products/list" element={<ProductList />} />
           <Route path="products/create" element={<CreateProduct />} />
           <Route path="orders/list" element={<OrderList />} />
+          <Route path="transaction/list" element={<Transaction />} />
           <Route path="support/tickets" element={<TicketList />} />
 
           <Route
